@@ -1,36 +1,38 @@
 spring:
   application:
-    name: gateway
-  cloud:
-    gateway:
-      routes:
-        - id: product-service # this field can be anything as long as it is unique
-          uri: lb://PRODUCT-SERVICE
-          predicates: # it is like the condition which is validated against incoming requests
-            - Path=/api/v1/products/**
-
-        - id: user-service # this field can be anything as long as it is unique
-          uri: lb://USER-SERVICE
-          predicates: # it is like the condition which is validated against incoming requests
-            - Path=/api/v1/users/**
-
-        - id: order-service # this field can be anything as long as it is unique
-          uri: lb://ORDER-SERVICE
-          predicates: # it is like the condition which is validated against incoming requests
-            - Path=/api/v1/orders/**, /api/v1/cart/**
-
-        - id: eureka-server
-          uri: http://localhost:8761
-          predicates:
-            - Path=/eureka/main
-          filters:
-            - setPath=/
-
-        - id: eureka-static-server
-          uri: http://localhost:8761
-          predicates:
-            - Path=/eureka/**
-
-server:
-  port: 8080
+    name: gateway-service
+  config:
+    import: optional:configserver:http://localhost:8888
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: product-service # this field can be anything as long as it is unique
+#          uri: lb://PRODUCT-SERVICE
+#          predicates: # it is like the condition which is validated against incoming requests
+#            - Path=/api/v1/products/**
+#
+#        - id: user-service # this field can be anything as long as it is unique
+#          uri: lb://USER-SERVICE
+#          predicates: # it is like the condition which is validated against incoming requests
+#            - Path=/api/v1/users/**
+#
+#        - id: order-service # this field can be anything as long as it is unique
+#          uri: lb://ORDER-SERVICE
+#          predicates: # it is like the condition which is validated against incoming requests
+#            - Path=/api/v1/orders/**, /api/v1/cart/**
+#
+#        - id: eureka-server
+#          uri: http://localhost:8761
+#          predicates:
+#            - Path=/eureka/main
+#          filters:
+#            - setPath=/
+#
+#        - id: eureka-static-server
+#          uri: http://localhost:8761
+#          predicates:
+#            - Path=/eureka/**
+#
+#server:
+#  port: 8080
 
