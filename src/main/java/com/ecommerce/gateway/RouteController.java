@@ -5,6 +5,8 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 @Configuration
 public class RouteController {
     @Bean
@@ -12,14 +14,20 @@ public class RouteController {
         return builder.routes()
                 .route("product-service", r -> r
                         .path("/api/v1/products/**")
-                        .filters(f -> f.circuitBreaker(config ->
+                        .filters(f -> f.retry(retryConfig ->
+                                        retryConfig.setRetries(5)
+                                                .setTimeout(Duration.ofMillis(500)))  //Use .setMethods to define Retry for specific http requests
+                                .circuitBreaker(config ->
                                 config.setName("ecomBreaker")
                                         .setFallbackUri("forward:/api/v1/fallback/product")))
                         .uri("lb://PRODUCT-SERVICE"))
 
                 .route("user-service", r -> r
                         .path("/api/v1/users/**")
-                        .filters(f -> f.circuitBreaker(config ->
+                        .filters(f -> f.retry(retryConfig ->
+                                        retryConfig.setRetries(5)
+                                                .setTimeout(Duration.ofMillis(500)))
+                                .circuitBreaker(config ->
                                 config.setName("ecomBreaker")
                                         .setFallbackUri("forward:/api/v1/fallback/user")))
                         .uri("lb://USER-SERVICE"))
