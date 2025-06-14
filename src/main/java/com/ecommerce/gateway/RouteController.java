@@ -12,10 +12,16 @@ public class RouteController {
         return builder.routes()
                 .route("product-service", r -> r
                         .path("/api/v1/products/**")
+                        .filters(f -> f.circuitBreaker(config ->
+                                config.setName("ecomBreaker")
+                                        .setFallbackUri("forward:/api/v1/fallback/product")))
                         .uri("lb://PRODUCT-SERVICE"))
 
                 .route("user-service", r -> r
                         .path("/api/v1/users/**")
+                        .filters(f -> f.circuitBreaker(config ->
+                                config.setName("ecomBreaker")
+                                        .setFallbackUri("forward:/api/v1/fallback/user")))
                         .uri("lb://USER-SERVICE"))
 
                 .route("order-service", r -> r
